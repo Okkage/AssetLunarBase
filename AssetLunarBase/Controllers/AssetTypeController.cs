@@ -1,5 +1,5 @@
 using AssetLunarBase.Data;
-using AssetLunarBase.DTOS.Stock;
+using AssetLunarBase.DTOS.AssetType;
 using AssetLunarBase.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +15,7 @@ public class AssetTypeController : ControllerBase
         _context = context;
     }
 
+    #region Getters
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -37,4 +38,56 @@ public class AssetTypeController : ControllerBase
         }
         return Ok(assetType);
     }
+    #endregion
+    
+    #region Posters
+    [HttpPost]
+    public IActionResult Create([FromBody] AssetTypeDefaultDTO assetTypeDto)
+    {
+        var assetType = AssetTypeMapper.AssetTypeMapFromDefaultDTOToAssetType(assetTypeDto);
+        _context.AssetTypes.Add(assetType);
+        _context.SaveChanges();
+        return CreatedAtAction(nameof(GetById), new { id = assetType.Id }, assetType);
+    }
+    #endregion
+
+    #region Putters
+    [HttpPut]
+    [Route("{id}")]
+    public IActionResult Update([FromRoute] Guid id, [FromBody] AssetTypeDefaultDTO assetTypeDto)
+    {
+        var matchedAssetType = _context.AssetTypes.FirstOrDefault(at => at.Id == id);
+
+        if (matchedAssetType == null)
+        {
+            return NotFound();
+        }
+        
+        matchedAssetType.Name = assetTypeDto.Name;
+        matchedAssetType.Code = assetTypeDto.Code;
+        matchedAssetType.CanHaveDividends = assetTypeDto.CanHaveDividends;
+        matchedAssetType.DefaultCurrency = assetTypeDto.DefaultCurrency;
+
+        _context.SaveChanges();
+
+        return Ok(AssetTypeMapper.AssetTypeMapToDefaultDTO(matchedAssetType));
+    }
+
+    #endregion
+    [HttpDelete("{id}")]
+    public IActionResult Delete([FromRoute] Guid id)
+    {
+        var assetTypeToRemove = _context.AssetTypes.FirstOrDefault(at => at.Id == id);
+
+        if (assetTypeToRemove == null)
+        {
+            return NotFound();
+        }
+        _context.AssetTypes.Remove(assetTypeToRemove);
+        
+        _context.SaveChanges();
+
+        return  NoContent();
+    }
+    
 }

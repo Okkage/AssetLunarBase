@@ -18,7 +18,7 @@ public class AssetDbContext : DbContext
         
         b.Entity<Asset>()
             .HasOne(a => a.AssetType)
-            .WithMany(at => at.Assets)
+            .WithMany()
             .HasForeignKey(fk => fk.AssetTypeId)
             .OnDelete(DeleteBehavior.Restrict);
         

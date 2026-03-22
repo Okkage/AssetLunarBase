@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AssetLunarBase")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d7423bf965fc558191e74e5a4eb471da1bd0d2e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fdb704ea5b1d9d2bfb99dd046d5c586186d0ab15")]
 [assembly: System.Reflection.AssemblyProductAttribute("AssetLunarBase")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AssetLunarBase")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,6 +1,7 @@
 using AssetLunarBase.Models;
 
-namespace AssetLunarBase.DTOS.Stock;
+namespace AssetLunarBase.DTOS.AssetType;
+using Models;
 
 public class AssetTypeDefaultDTO
 {
@@ -9,9 +10,7 @@ public class AssetTypeDefaultDTO
     public  string? DefaultCurrency { get;set; }
     public  bool CanHaveDividends { get; set; } = false;
 
-    
-    
-}
+    }
 
 public static class AssetTypeMapper
 {
@@ -24,5 +23,10 @@ public static class AssetTypeMapper
             DefaultCurrency = assetType.DefaultCurrency,
             CanHaveDividends = assetType.CanHaveDividends
         };
+    }
+    
+    public static AssetType AssetTypeMapFromDefaultDTOToAssetType(AssetTypeDefaultDTO assetType)
+    {
+        return new AssetType(assetType.Name, assetType.Code, assetType.DefaultCurrency,assetType.CanHaveDividends);
     }
 }
