@@ -17,36 +17,38 @@ public class AssetTypeController : ControllerBase
 
     #region Getters
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        var assetTypes =  _context.AssetTypes
+        var assetTypes = await _context.AssetTypes.ToListAsync();
+            
+            var assetTypeDto = assetTypes
             .Select(l => AssetTypeMapper.AssetTypeMapToDefaultDTO(l)
             ).ToList();
         
-        return Ok(assetTypes);
+        return Ok(assetTypeDto);
     }
     [HttpGet("{id}")]
-    public IActionResult GetById([FromRoute]Guid id)
+    public async Task<IActionResult> GetById([FromRoute]Guid id)
     {
-        var assetType = _context.AssetTypes.
-            Where(at => at.Id == id).
-            Select(l => AssetTypeMapper.AssetTypeMapToDefaultDTO(l));
-
+        var assetType = await _context.AssetTypes.Where(at => at.Id == id).FirstOrDefaultAsync();
+        
         if (assetType == null)
         {
             return NotFound();
         }
-        return Ok(assetType);
+        var assetTypeDto = AssetTypeMapper.AssetTypeMapToDefaultDTO(assetType);
+        
+        return Ok(assetTypeDto);
     }
     #endregion
     
     #region Posters
     [HttpPost]
-    public IActionResult Create([FromBody] AssetTypeDefaultDTO assetTypeDto)
+    public async Task<IActionResult> Create([FromBody] AssetTypeDefaultDTO assetTypeDto)
     {
         var assetType = AssetTypeMapper.AssetTypeMapFromDefaultDTOToAssetType(assetTypeDto);
-        _context.AssetTypes.Add(assetType);
-        _context.SaveChanges();
+        await _context.AssetTypes.AddAsync(assetType);
+        await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetById), new { id = assetType.Id }, assetType);
     }
     #endregion
@@ -54,9 +56,9 @@ public class AssetTypeController : ControllerBase
     #region Putters
     [HttpPut]
     [Route("{id}")]
-    public IActionResult Update([FromRoute] Guid id, [FromBody] AssetTypeDefaultDTO assetTypeDto)
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] AssetTypeDefaultDTO assetTypeDto)
     {
-        var matchedAssetType = _context.AssetTypes.FirstOrDefault(at => at.Id == id);
+        var matchedAssetType = await _context.AssetTypes.FirstOrDefaultAsync(at => at.Id == id);
 
         if (matchedAssetType == null)
         {
@@ -68,16 +70,16 @@ public class AssetTypeController : ControllerBase
         matchedAssetType.CanHaveDividends = assetTypeDto.CanHaveDividends;
         matchedAssetType.DefaultCurrency = assetTypeDto.DefaultCurrency;
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return Ok(AssetTypeMapper.AssetTypeMapToDefaultDTO(matchedAssetType));
     }
 
     #endregion
     [HttpDelete("{id}")]
-    public IActionResult Delete([FromRoute] Guid id)
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
-        var assetTypeToRemove = _context.AssetTypes.FirstOrDefault(at => at.Id == id);
+        var assetTypeToRemove = await _context.AssetTypes.FirstOrDefaultAsync(at => at.Id == id);
 
         if (assetTypeToRemove == null)
         {
@@ -85,7 +87,7 @@ public class AssetTypeController : ControllerBase
         }
         _context.AssetTypes.Remove(assetTypeToRemove);
         
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return  NoContent();
     }
